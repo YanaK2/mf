@@ -5,6 +5,8 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use app\models\Chart;
+use app\models\Prod;
 
 /** @var yii\web\View $this */
 /** @var app\models\OrderSearch $searchModel */
@@ -21,20 +23,23 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Order', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php  echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php  //echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        //'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id_order',
-            'id_chart',
-            'id_user',
-            'id_prod',
+            //'id_order',
+            //'id_chart',
+           // 'id_user',
+            ['attribute'=>'Товар', 'value'=> function($data){return
+                $data->getProd()->One()->name;}],
+           // ['attribute'=>'Количество', 'value'=> function($data){return
+              //  $data->getChart()->One()->count;}],
             'count',
-            'time',
+            //'time',
             'status',
             'reason',
             [

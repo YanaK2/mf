@@ -47,9 +47,9 @@ class Chart extends \yii\db\ActiveRecord
     {
         return [
             'id_chart' => 'Id Chart',
-            'id_user' => 'Id User',
-            'id_prod' => 'Id Prod',
-            'count' => 'Count',
+            'id_user' => 'Пользователь',
+            'id_prod' => 'Продукт',
+            'count' => 'Количество',
         ];
     }
 

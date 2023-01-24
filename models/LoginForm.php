@@ -78,7 +78,13 @@ class LoginForm extends Model
         if ($this->_user === false) {
             $this->_user = User::findByLogin($this->login);
         }
-
         return $this->_user;
     }
+    public function attributeLabels()
+    {
+        return [
+            'rememberMe' => 'Запомнить меня',
+            'password'=>'Пароль'
+        ];}
+
 }

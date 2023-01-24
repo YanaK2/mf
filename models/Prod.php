@@ -41,7 +41,7 @@ class Prod extends \yii\db\ActiveRecord
             [['photo', 'name', 'count', 'price', 'country', 'id_cat', 'color'], 'required'],
             [['count', 'price', 'id_cat'], 'integer'],
             [['time'], 'safe'],
-            [['photo'], 'string', 'max' => 250],
+            [['photo'], 'file',  'extensions' => ['png', 'jpg', 'gif'],'skipOnEmpty' => false ],
             [['name', 'country', 'color'], 'string', 'max' => 100],
             [['id_cat'], 'unique'],
             [['id_cat'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['id_cat' => 'id_cat']],
@@ -60,7 +60,7 @@ class Prod extends \yii\db\ActiveRecord
             'count' => 'Количество на складе',
             'price' => 'Цена',
             'country' => 'Страна',
-            'id_cat' => 'Id Cat',
+            'id_cat' => 'Категория',
             'color' => 'Цвет',
             'time' => 'Дата завоза',
         ];

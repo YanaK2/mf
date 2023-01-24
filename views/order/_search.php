@@ -25,11 +25,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'count') ?>
 
-    <?php  echo $form->field($model, 'time') ?>
+    <!--?php  echo $form->field($model, 'time') ?-->
 
-    <?php echo $form->field($model, 'status') ?>
+    <!--?php echo $form->field($model, 'status') ?-->
 
-    <?php echo $form->field($model, 'reason') ?>
+    <!--?php echo $form->field($model, 'reason') ?-->
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

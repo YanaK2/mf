@@ -38,6 +38,12 @@ $this->params['breadcrumbs'][] = $this->title;
             //'id_cat',
             //'color',
             //'time',
+            ['attribute'=>'Категория', 'value'=> function($data){return
+                $data->getCat()->One()->cat;}],
+            'name',
+            ['attribute'=>'Фото', 'format'=>'html',
+                'value'=>function($data){return"<img src='{$data->photo}' alt='photo' style='width: 70px;'>";}],
+
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Prod $model, $key, $index, $column) {

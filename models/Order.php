@@ -54,14 +54,14 @@ class Order extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_order' => 'Id Order',
-            'id_chart' => 'Id Chart',
-            'id_user' => 'Id User',
-            'id_prod' => 'Id Prod',
-            'count' => 'Count',
-            'time' => 'Time',
-            'status' => 'Status',
-            'reason' => 'Reason',
+            //'id_order' => 'Id Order',
+            //'id_chart' => 'Id Chart',
+            //'id_user' => 'Id User',
+            'id_prod' => 'Продукт',
+            'count' => 'Количество',
+            'time' => 'Время добавления',
+            'status' => 'Статус',
+            'reason' => 'Причина',
         ];
     }
 

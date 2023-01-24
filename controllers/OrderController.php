@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\Chart;
+use app\models\Prod;
 use Yii;
 use app\models\Order;
 use app\models\OrderSearch;
@@ -56,6 +58,7 @@ class OrderController extends Controller
      */
     public function actionView($id_order)
     {
+
         return $this->render('view', [
             'model' => $this->findModel($id_order),
         ]);
@@ -68,7 +71,7 @@ class OrderController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Order();
+       /* $model = new Order();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -80,8 +83,20 @@ class OrderController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-        ]);
-    }
+        ]);*/
+        $id_chart = Yii::$app->request->post('id_chart');
+        $chart = Chart::findOne($id_chart);
+
+        if (!$chart) return false;
+
+            $model = new Chart();
+            $model->id_user = Yii::$app->user->identity->id_user;
+            $model->id_prod = $chart->id_prod;
+            $model->count = $chart->count;
+
+
+            if ($model->save(false)) return false;
+        }
 
     /**
      * Updates an existing Order model.
@@ -135,7 +150,7 @@ class OrderController extends Controller
 
     public function beforeAction($action)
     {
-        if ((Yii::$app->user->isGuest) || (Yii::$app->user->identity->is_admin==0)){
+        if ((Yii::$app->user->isGuest)){
             $this->redirect(['site/login']);
             return false;
         } else return true;

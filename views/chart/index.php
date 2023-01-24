@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use app\models\Prod;
+use app\models\OrderSearch;
 
 
 /** @var yii\web\View $this */
@@ -51,8 +52,24 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
-    <p><?= Html::a('К заказу', [ 'order/index?OrderSearch[id_order]=&OrderSearch[id_user]='.Yii::$app->user->identity->id_user], [
+    <!--?= Html::a('К заказу', [ 'order/index?OrderSearch[id_order]=&OrderSearch[id_user]='.Yii::$app->user->identity->id_user], [
             'class' => 'btn btn-primary',
-        ])?>
-    </p>
-</div>
+        ])?-->
+<?php
+//$order=new \app\models\Order();
+//$chart=$dataProvider->getModels();
+$charts = Chart::find()->where(['id_user'=>Yii::$app->user->identity->id_user])->all();
+if (!$charts) return false;
+foreach ($charts as $chart)
+{
+    $order=new \app\models\Order();
+   $order-> id_user=Yii::$app->user->identity->id_user;
+    $order->id_prod=$chart->id_prod;
+    $order->count=$chart->count;
+    $order->save(false);
+    $chart->delete();
+
+}
+echo "<p
+onclick='add_chart({$chart->id_chart})' class='btn btn-primary'>Добавить в корзину</p>";
+?>

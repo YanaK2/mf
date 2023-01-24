@@ -2,11 +2,13 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Prod;
 use app\models\ProdSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * ProdController implements the CRUD actions for Prod model.
@@ -80,7 +82,14 @@ class ProdController extends Controller
         $model = new Prod();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            $model->load($this->request->post());
+
+            $model->photo=UploadedFile::getInstance($model,'photo');
+            $file_name='/productImage/' . \Yii::$app->getSecurity()->generateRandomString(50). '.' . $model->photo->extension;
+            $model->photo->saveAs(\Yii::$app->basePath . $file_name);
+            $model->photo=$file_name;
+
+            if ($model->save(false)) {
                 return $this->redirect(['view', 'id_prod' => $model->id_prod]);
             }
         } else {
@@ -102,14 +111,19 @@ class ProdController extends Controller
     public function actionUpdate($id_prod)
     {
         $model = $this->findModel($id_prod);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_prod' => $model->id_prod]);
-        }
-
+        if ($this->request->isPost) {
+            $model->load($this->request->post());
+            $model->photo=UploadedFile::getInstance($model,'photo');
+            $file_name='/productImage/' . \Yii::$app->getSecurity()->generateRandomString(50). '.' . $model->photo->extension;
+ $model->photo->saveAs(\Yii::$app->basePath . $file_name);
+ $model->photo=$file_name;
+ $model->save(false);
+ return $this->redirect(['view', 'id_prod' => $model->id_prod]);
+ }
         return $this->render('update', [
-            'model' => $model,
-        ]);
+ 'model' => $model,
+
+            ]);
     }
 
     /**

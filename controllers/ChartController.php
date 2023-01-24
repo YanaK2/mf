@@ -5,9 +5,12 @@ namespace app\controllers;
 use Yii;
 use app\models\Chart;
 use app\models\ChartSearch;
+use yii\bootstrap5\Modal;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Prod;
+use app\models\User;
 
 /**
  * ChartController implements the CRUD actions for Chart model.
@@ -32,6 +35,16 @@ class ChartController extends Controller
         );
     }
 
+    public function beforeAction($action)
+    {
+        /*if ((Yii::$app->user->isGuest)){
+            $this->redirect(['site/login']);
+            return false;
+        } else return true;*/
+
+        if ($action->id=='create') $this->enableCsrfValidation=false;
+        return parent::beforeAction($action);
+    }
     /**
      * Lists all Chart models.
      *
@@ -56,6 +69,7 @@ class ChartController extends Controller
      */
     public function actionView($id_chart)
     {
+
         if ((Yii::$app->user->identity->is_admin==0)) {
             return $this->render('view', [
                 'model' => $this->findModel($id_chart),
@@ -64,6 +78,7 @@ class ChartController extends Controller
         return false;
     }
 
+
     /**
      * Creates a new Chart model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -71,19 +86,28 @@ class ChartController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Chart();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_chart' => $model->id_chart]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        $id_prod = Yii::$app->request->post('id_prod');
+        $items=Yii::$app->request->post('count');
+        $prod = Prod::findOne($id_prod);
+        if (!$prod) return false;
+        if ($prod->count > 0) {
+            $prod->count -= $items;
+            $prod->save(false);
+            $model = Chart::find()->where(['id_user' => Yii::$app->user->identity->id_user])->andWhere(['id_prod' => $id_prod])->one();
+ if ($model) {
+     $model->count += $items;
+     $model->save();
+     return $prod->count;
+ }
+ $model = new Chart();
+ $model->id_user = Yii::$app->user->identity->id_user;
+ $model->id_prod = $prod->id_prod;
+ $model->count = $items;
+ if ($model->save(false)) return $prod->count;
+ }
+        return 'false';
     }
 
     /**
@@ -95,15 +119,27 @@ class ChartController extends Controller
      */
     public function actionUpdate($id_chart)
     {
-        $model = $this->findModel($id_chart);
+       $model = $this->findModel($id_chart);
+        $prod= Prod::findOne($model->id_prod);
+        $cound=$prod->count;
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_chart' => $model->id_chart]);
+
+        if ((Yii::$app->user->identity->is_admin==0)&&($this->request->isPost && $model->load($this->request->post()) && $model->save())) {
+
+            if (($this->request->isPost)&&($model->count>$cound)){
+                return 'Желаемое число товара превышает наличие';
+
+            }
+
+            return $this->redirect(['chart/index?ChartSearch[id_chart]=&ChartSearch[id_user]='.Yii::$app->user->identity->id_user]);
+
         }
 
         return $this->render('update', [
             'model' => $model,
         ]);
+
+
     }
 
     /**
@@ -136,11 +172,5 @@ class ChartController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function beforeAction($action)
-    {
-        if ((Yii::$app->user->isGuest)){
-            $this->redirect(['site/login']);
-            return false;
-        } else return true;
-    }
+
 }
